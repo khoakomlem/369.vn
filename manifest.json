@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "369.vn Tool",
+  "permissions": ["*://*.facebook.com/*", "webRequest", "webRequestBlocking", "cookies"],
+  "version": "1.0",
+  "icons": {
+     "128": "logo.png",
+     "16": "logo.png"
+  },
+  "browser_action": {
+      "default_icon": "logo.png",
+      "default_popup": "popup.html"
+  },
+  "background": {
+    "persistent": true,
+    "scripts": ["background.js"]
+  },
+  "description": "An extension help you use internet more conveniently"
+}

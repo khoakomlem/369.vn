@@ -40,7 +40,6 @@ const getFeeds = async (id, token) => {
 };
 
 const deletePost = async (
-	groupID,
 	postID,
 	av,
 	eav,
@@ -76,7 +75,6 @@ $(document).ready(async () => {
 				fb_dtsg
 			);
 			await deletePost(
-				uid,
 				post.id,
 				av,
 				eav,

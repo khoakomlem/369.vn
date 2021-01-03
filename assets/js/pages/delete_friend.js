@@ -41,12 +41,12 @@ const removeFriend = async (id, token, fb_dtsg) => {
 };
 
 class Friend {
-	constructor({id, react = 0, cmt = 0, name = "", message=0} = {}, token) {
+	constructor({id, react = 0, cmt = 0, name = "", messages=0} = {}, token) {
 		this.id = id;
 		this.react = react;
 		this.cmt = cmt;
 		this.name = name;
-		this.message = message;
+		this.messages = messages;
 		this.img = `<img src="https://graph.facebook.com/${id}/picture?height=500&access_token=${token}" style="width: 30px; height: 30px; border-radius: 100px;" alt="avatar ${name}">`;
 	}
 }
@@ -60,14 +60,14 @@ const init = async (friendList, token) => {
 const updateTable = (friends, table) => {
 	table.clear();
 	for (const friend of friends) {
-		const {id, name, img, react, cmt, message} = friend;
+		const {id, name, img, react, cmt, messages} = friend;
 		table.row.add([
 			`<th class="no-sort" ><input id="${id}" type="checkbox" class="form-control checkbox"></th>`,
 			name,
 			img,
 			react,
 			cmt,
-			message
+			messages
 		]);
 	}
 	table.draw();
@@ -112,7 +112,7 @@ $(document).ready(async () => {
 	for (let i=0; i<messages.length; i++) {
 		const message = messages[i];
 		const index = friendList.findIndex(e => e.id == message.thread_key.other_user_id);
-		if (index != -1) friendList[index].message = message.messages_count;
+		if (index != -1) friendList[index].messages = message.messages_count;
 	}
 
 	updateTable(friendList, table);
@@ -120,8 +120,9 @@ $(document).ready(async () => {
 		$("#search").prop("disabled", true);
 		const react = parseInt($("#react").val());
 		const cmt = parseInt($("#cmt").val());
+		const messages = parseInt($("#messages").val());
 		const rows = table.rows().data();
-		const newData = friendList.filter(e => e.react <= react && e.cmt <= cmt);
+		const newData = friendList.filter(e => (e.react <= react || isNaN(react)) && (e.cmt <= cmt || isNaN(cmt)) && (e.messages <= messages || isNaN(messages)));
 		updateTable(newData, table);
 		$("#search").prop("disabled", false);
 	});

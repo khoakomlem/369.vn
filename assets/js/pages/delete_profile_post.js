@@ -61,29 +61,68 @@ $(document).ready(async () => {
 	const {id: uid} = await utils.tokenData(token);
 
 	$("#remove").click(async () => {
+		let stop = false;
+		swal.fire({
+			icon: "info",
+			title: "Đang xóa profile posts . . .",
+			html: "Đã xóa <b>0</b>/<b id='sum'>0</b> bài viết!",
+			allowOutsideClick: false,
+			allowEscapeKey: true,
+			allowEnterKey: false,
+			didOpen: () => {
+				Swal.showLoading();
+			},
+			showCancelButton: true,
+			cancelButtonText: "Dừng lại"
+		}).then(result => {
+			stop = true;
+		});
 		const posts = await getFeeds(uid, token);
+		const content = Swal.getContent();
+		content.querySelector("#sum").textContent = posts.length;
+		let count = 0;
+
 		for (const post of posts) {
-			post.id = post.id.split("_")[1];
-			$("#log").prepend(
-				`<div class="alert alert-info mt-3" role="alert">Xoá bài viết ${post.id} <p id="load${post.id}">[...]<p></div>`
-			);
-			const something = await getsomething(uid, post.id);
-			const {feedobjects_identifiers, eav, av} = something;
-			const hideable_token = await get_hideable_token(
-				uid,
-				feedobjects_identifiers,
-				fb_dtsg
-			);
-			await deletePost(
-				post.id,
-				av,
-				eav,
-				feedobjects_identifiers,
-				hideable_token,
-				fb_dtsg
-			);
-			$(`#load${post.id}`).html("[♥]");
-			await utils.asyncWait(3000);
+			if (stop) break;
+			console.log("chao");
+			try {
+				const uniqid = Date.now();
+				post.id = post.id.split("_")[1];
+				$("#log").prepend(
+					`<div class="alert alert-info mt-3" role="alert">Xoá bài viết ${post.id} <p id="${uniqid}">[...]<p></div>`
+				);
+				let something;
+				try {
+					something = await getsomething(uid, post.id);
+				} catch (e) {
+					$(`#${uniqid}`).html("[X]");
+					continue;
+				}
+				const {feedobjects_identifiers, eav, av} = something;
+				const hideable_token = await get_hideable_token(
+					uid,
+					feedobjects_identifiers,
+					fb_dtsg
+				);
+				await deletePost(
+					post.id,
+					av,
+					eav,
+					feedobjects_identifiers,
+					hideable_token,
+					fb_dtsg
+				);
+				$(`#${uniqid}`).html("[♥]");
+				content.querySelector("b").textContent = ++count;
+				if (count == posts.length) {
+					swal.fire({
+						icon: "success",
+						title: "Thành công",
+						text: `Đã xóa xong ${count}/${posts.length} bài viết!`
+					});
+				}
+				await utils.asyncWait(3000);
+			} catch (e) {}
 		}
 	});
 });

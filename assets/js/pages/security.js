@@ -91,17 +91,17 @@ const get_fb_dtsg_ag = async () => {
 $(document).ready(async () => {
 	const fb_dtsg_ag = await get_fb_dtsg_ag();
 	const data = [
-		"Approval",
-		"Trusted Contacts",
-		"Status Privacy",
-		"Friend Request Privacy",
-		"Email Privacy",
-		"Phone Number Privacy",
-		"Search Engines Privacy",
-		"Timeline Review",
-		"Tag Review",
-		"Mobiphone Activation",
-		"Follower Comment Privacy"
+		"Bảo mật phê duyệt",
+		"Liên hệ tin cậy",
+		"Thông tin cá nhân",
+		"Thông tin kết bạn",
+		"Thông tin Email",
+		"Thông tin số điện thoại",
+		"Cho phép các công cụ tìm kiếm",
+		"Bảo mật dòng thời gian",
+		"Đánh giá tag",
+		"Kích hoạt mobiphone",
+		"Bảo mật theo dõi"
 	];
 	const url = [
 		"https://www.facebook.com/settings?tab=security&section=approvals&view",
@@ -116,17 +116,32 @@ $(document).ready(async () => {
 		"https://www.facebook.com/settings?tab=mobile",
 		"https://www.facebook.com/settings?tab=followers&section=comment&view"
 	];
+	let count = 0;
 	for (let i = 0; i < data.length; i++) {
 		const result = !(await fns[i](fb_dtsg_ag));
-		console.log(result);
+		if (result) count++;
+		const percent = (count / data.length) * 100;
+		$(".meter>span").css("width", percent + "%");
+		if (percent < 10) {
+			$("#dobaomat").html("Kém");
+		} else if (percent < 30) {
+			$("#dobaomat").html("Thấp");
+		} else if (percent < 50) {
+			$("#dobaomat").html("Thường");
+		} else if (percent < 70) {
+			$("#dobaomat").html("An toàn");
+		} else {
+			$("#dobaomat").html("Cao!");
+		}
+		$("#dobaomat").append(` (${Math.round(percent)}%)`);
 		$("#table").append(
 			`<div class="alert alert-primary mt-3" role="alert">${
 				data[i]
 			}<a style="margin-left: 10px; cursor: pointer" href=${
 				url[i]
-			} target="_blank" class="badge badge-${result ? "info" : "danger"}">${
-				result ? "Safe" : "Not Safe"
-			}</a></div>`
+			} target="_blank" class="badge badge-${
+				result ? "info" : "danger"
+			}">${result ? "An Toàn" : "Không An Toàn"}</a></div>`
 		);
 	}
 });

@@ -35,6 +35,17 @@ $("#go").click(() => {
 		alert("Lỗi");
 		return;
 	}
+	swal.fire({
+		icon: "info",
+		title: "Đang xử lí . . .",
+		html: "Vui lòng chờ",
+		allowOutsideClick: false,
+		allowEscapeKey: true,
+		allowEnterKey: false,
+		didOpen: () => {
+			Swal.showLoading();
+		}
+	});
 	$.get(
 		"https://graph.facebook.com/" +
 			id +
@@ -52,6 +63,11 @@ $("#go").click(() => {
 				output += data.id + "\n";
 			});
 			utils.download("friends.txt", output);
+			swal.fire({
+				icon: "success",
+				title: "Thành công",
+				text: `Đã tải list friend của uid: ${id} về máy!`
+			});
 		}
 	);
 });

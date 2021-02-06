@@ -100,7 +100,7 @@ $(document).ready(async () => {
 		"Cho phép các công cụ tìm kiếm",
 		"Bảo mật dòng thời gian",
 		"Đánh giá tag",
-		"Kích hoạt mobiphone",
+		"Kích hoạt mobilephone",
 		"Bảo mật theo dõi"
 	];
 	const url = [
@@ -121,7 +121,7 @@ $(document).ready(async () => {
 		const result = !(await fns[i](fb_dtsg_ag));
 		if (result) count++;
 		const percent = (count / data.length) * 100;
-		$(".meter>span").css("width", percent + "%");
+		$(".bar>div").css("width", percent + "%");
 		if (percent < 10) {
 			$("#dobaomat").html("Kém");
 		} else if (percent < 30) {
@@ -135,13 +135,22 @@ $(document).ready(async () => {
 		}
 		$("#dobaomat").append(` (${Math.round(percent)}%)`);
 		$("#table").append(
-			`<div class="alert alert-primary mt-3" role="alert">${
+			`<tr>
+				<td style="font-size: 110%;">${data[i]}</td>
+				<td><button style="min-width:100px; font-size: 110%;" class="btn badge badge-${result ? 'primary' : 'danger'}">${result ? "An Toàn" : "Không An Toàn"}</button></td>
+				<td><a class="btn btn-outline-info btn-sm" target = "_blank" href="${url[i]}" >Sửa thiết lập</a></td>
+			</tr>`
+		);
+	}
+});
+
+
+/*
+	<div class="alert alert-primary mt-3" role="alert">${
 				data[i]
 			}<a style="margin-left: 10px; cursor: pointer" href=${
 				url[i]
 			} target="_blank" class="badge badge-${
 				result ? "info" : "danger"
-			}">${result ? "An Toàn" : "Không An Toàn"}</a></div>`
-		);
-	}
-});
+			}">${result ? "An Toàn" : "Không An Toàn"}</a></div>
+*/

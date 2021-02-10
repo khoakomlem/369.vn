@@ -130,6 +130,24 @@ $(document).ready(async () => {
 		$("#remove").prop("disabled", true);
 		const allPages = table.cells().nodes();
 		const nodes = $(allPages).find('input[type="checkbox"]:checked');
+		swal.fire({
+			icon: "info",
+			title: "Đang xóa bạn bè . . .",
+			html: "Đã xóa <b>0</b>/<b id='sum'>0</b> người bạn!",
+			allowOutsideClick: false,
+			allowEscapeKey: true,
+			allowEnterKey: false,
+			didOpen: () => {
+				Swal.showLoading();
+			},
+			showCancelButton: true,
+			cancelButtonText: "Dừng lại"
+		}).then(result => {
+			stop = true;
+		});
+		const content = Swal.getContent();
+		content.querySelector("#sum").textContent = nodes.length;
+		let count = 0;
 		for (let i = 0; i < nodes.length; i++) {
 			const id = $(nodes[i]).attr("id");
 			friendList.splice(
@@ -142,7 +160,15 @@ $(document).ready(async () => {
 			removeFriend(id, token, fb_dtsg);
 			$(`#load${id}`).html("[♥]");
 			updateTable(friendList, table);
-			await utils.asyncWait(2000);
+			content.querySelector("b").textContent = ++count;
+			if (count == nodes.length) {
+				swal.fire({
+					icon: "success",
+					title: "Thành công",
+					text: `Đã xóa xong ${count}/${nodes.length} người bạn!`
+				});
+			}
+			await utils.asyncWait(500);
 		}
 		$("#remove").prop("disabled", false);
 	});
